@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Demo</string>
+    <string-array name="type_options">
+        <item>Residential</item>
+        <item>Commercial</item>
+    </string-array>
+</resources>
