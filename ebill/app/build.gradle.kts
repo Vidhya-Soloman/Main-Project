@@ -47,6 +47,9 @@ dependencies {
     implementation ("com.google.firebase:firebase-analytics")
     implementation ("com.google.firebase:firebase-auth:22.3.1")
     implementation ("com.google.firebase:firebase-firestore:24.7.1")
+    implementation ("com.google.android.material:material:1.4.0") // or the latest version
+
+
 
 
 }
