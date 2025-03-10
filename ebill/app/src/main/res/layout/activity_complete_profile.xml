@@ -10,13 +10,26 @@
         android:orientation="vertical"
         android:gravity="center">
 
+        <!-- Title TextView -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="Ebill"
+            android:textAlignment="center"
+            android:textSize="60sp"
+            android:textStyle="bold"
+            android:textColor="#2F4F4F" /> <!-- Space below the title -->
+
         <EditText
             android:id="@+id/full_name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Full Name"
             android:inputType="textPersonName"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/> <!-- Space between fields -->
 
         <EditText
             android:id="@+id/consumer_number_edit_text"
@@ -24,7 +37,8 @@
             android:layout_height="wrap_content"
             android:hint="Consumer Number"
             android:inputType="number"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/> <!-- Space between fields -->
 
         <EditText
             android:id="@+id/phone_number_edit_text"
@@ -32,7 +46,8 @@
             android:layout_height="wrap_content"
             android:hint="Phone Number"
             android:inputType="phone"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/> <!-- Space between fields -->
 
         <EditText
             android:id="@+id/transformer_id_edit_text"
@@ -40,7 +55,8 @@
             android:layout_height="wrap_content"
             android:hint="Transformer ID"
             android:inputType="text"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/> <!-- Space between fields -->
 
         <EditText
             android:id="@+id/address_edit_text"
@@ -48,7 +64,8 @@
             android:layout_height="wrap_content"
             android:hint="Address"
             android:inputType="textPostalAddress"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/> <!-- Space between fields -->
 
         <EditText
             android:id="@+id/pin_code_edit_text"
@@ -56,19 +73,22 @@
             android:layout_height="wrap_content"
             android:hint="Pin Code"
             android:inputType="number"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/> <!-- Space between fields -->
 
         <Spinner
             android:id="@+id/type_spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"/> <!-- Space between spinner and button -->
 
         <Button
             android:id="@+id/save_profile_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Save Profile"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:backgroundTint="#2AAA8A"/>
 
     </LinearLayout>
 </ScrollView>

@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,7 +19,7 @@ import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText emailEditText, passwordEditText;
+    private EditText emailEditText, passwordEditText, retypePasswordEditText;  // Added retypePasswordEditText
     private Button registerButton;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -35,6 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         emailEditText = findViewById(R.id.email_edit_text);
         passwordEditText = findViewById(R.id.password_edit_text);
+        retypePasswordEditText = findViewById(R.id.retype_password_edit_text); // Get reference to the retype password field
         registerButton = findViewById(R.id.register_button);
 
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -48,12 +48,21 @@ public class RegisterActivity extends AppCompatActivity {
     private void registerUser() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
+        String retypePassword = retypePasswordEditText.getText().toString().trim();  // Get retype password
 
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(RegisterActivity.this, "Please enter email and password", Toast.LENGTH_SHORT).show();
+        // Check if any field is empty
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(retypePassword)) {
+            Toast.makeText(RegisterActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Check if passwords match
+        if (!password.equals(retypePassword)) {
+            Toast.makeText(RegisterActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Proceed with Firebase authentication if passwords match
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

@@ -6,27 +6,45 @@
     android:gravity="center"
     android:padding="20dp">
 
+    <!-- Title TextView -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="Login"
+        android:textAlignment="center"
+        android:textSize="60sp"
+        android:textStyle="bold"
+        android:textColor="#50C878" />
+
+    <!-- Email Field -->
     <EditText
         android:id="@+id/email_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Email"
         android:inputType="textEmailAddress"
-        android:padding="10dp"/>
+        android:padding="10dp"
+        android:layout_marginBottom="20dp" /> <!-- Space between email and password -->
 
+    <!-- Password Field -->
     <EditText
         android:id="@+id/password_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Password"
         android:inputType="textPassword"
-        android:padding="10dp"/>
+        android:padding="10dp"
+        android:layout_marginBottom="20dp" /> <!-- Space between password and login button -->
 
+    <!-- Login Button -->
     <Button
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Login"
-        android:padding="10dp"/>
+        android:padding="10dp"
+        android:backgroundTint="#28A745" />
 
 </LinearLayout>

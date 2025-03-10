@@ -6,27 +6,55 @@
     android:gravity="center"
     android:padding="20dp">
 
+    <!-- Title TextView -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="Sign Up"
+        android:textAlignment="center"
+        android:textSize="60sp"
+        android:textStyle="bold"
+        android:textColor="#0096FF" /> <!-- Set color of the title text -->
+
+    <!-- Email Field with margin -->
     <EditText
         android:id="@+id/email_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Email"
         android:inputType="textEmailAddress"
-        android:padding="10dp"/>
+        android:padding="10dp"
+        android:layout_marginBottom="20dp" />  <!-- Space between fields -->
 
+    <!-- Password Field with margin -->
     <EditText
         android:id="@+id/password_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Password"
         android:inputType="textPassword"
-        android:padding="10dp"/>
+        android:padding="10dp"
+        android:layout_marginBottom="20dp" />  <!-- Space between fields -->
 
+    <!-- Retype Password Field with margin -->
+    <EditText
+        android:id="@+id/retype_password_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Retype Password"
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:layout_marginBottom="20dp" />  <!-- Space between fields -->
+
+    <!-- Sign Up Button -->
     <Button
         android:id="@+id/register_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register"
-        android:padding="10dp"/>
+        android:text="Sign Up"
+        android:padding="10dp"
+        android:backgroundTint="#007BFF" />
 
 </LinearLayout>
