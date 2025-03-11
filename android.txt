@@ -1,0 +1,48 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Initialize the LCD with I2C address (use your own address here)
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // 0x27 is a common I2C address for 16x2 LCDs
+
+void setup() {
+  // Start serial communication
+  Serial.begin(9600);
+  
+  // Initialize the LCD
+  lcd.begin();
+  lcd.backlight();  // Turn on the backlight
+  
+  lcd.setCursor(0, 0);
+  lcd.print("Waiting for text...");
+}
+
+void loop() {
+  // Check if data is available in the serial buffer
+  if (Serial.available()) {
+    String inputText = "";  // Clear previous input text
+    // Read the input text until a newline character is received
+    while (Serial.available()) {
+      char receivedChar = Serial.read();
+      inputText += receivedChar;
+      delay(10);  // Small delay to prevent serial buffer overflow
+    }
+
+    // Clear the LCD and display the received text
+    lcd.clear();
+    lcd.setCursor(0, 0);  // Set cursor to top left corner
+    lcd.print(inputText);  // Display the text on the LCD
+  }
+}
+
+
+
+
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} { // Change `Users` to `users`
+      allow read, write: if request.auth != null;
+    }
+  }
+}
