@@ -52,11 +52,22 @@ function Profile() {
         justifyContent: "center",
         width: "100vw",
         minHeight: "100vh",
-        backgroundColor: "#f4f4f4",
+        backgroundColor: "#34495e",  // Darker background outside the profile box
         padding: "20px",
+        fontFamily: "'Roboto', sans-serif",
       }}
     >
-      <h1 style={{ fontSize: "32px", fontWeight: "bold", color: "#2c3e50", textAlign: "center", marginBottom: "20px" }}>
+      <h1
+        style={{
+          fontSize: "36px",
+          fontWeight: "700",
+          color: "#ecf0f1",  // Lighter color for the header
+          textAlign: "center",
+          marginBottom: "20px",
+          letterSpacing: "1px",
+          textTransform: "uppercase",
+        }}
+      >
         User Profile
       </h1>
 
@@ -66,80 +77,118 @@ function Profile() {
             width: "90%",
             maxWidth: "400px",
             backgroundColor: "#ffffff",
-            borderRadius: "10px",
-            padding: "20px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            borderRadius: "15px",
+            padding: "25px",
+            boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
             textAlign: "center",
+            transition: "all 0.3s ease",
+            background: "linear-gradient(135deg, rgb(98, 52, 169), rgb(69, 123, 157))", // Darker gradient
+            color: "#fff",
           }}
         >
-          {/* Profile Picture */}
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
-            <img
-              src={userDetails.photo || "https://via.placeholder.com/150"}
-              alt="Profile"
-              width={"100px"}
-              height={"100px"}
-              style={{ borderRadius: "50%", objectFit: "cover" }}
-            />
-          </div>
-
-          <h3 style={{ color: "#2c3e50", marginBottom: "10px" }}>
+          <h3
+            style={{
+              fontSize: "22px",
+              fontWeight: "600",
+              marginBottom: "15px",
+            }}
+          >
             Welcome, {userDetails.firstName}! 🙏
           </h3>
 
-          {/* Profile Button (Navigates to MyProfile.jsx) */}
+          {/* Profile Button */}
           <button
             onClick={() => navigate("/my-profile")}
             style={{
-              padding: "10px",
+              padding: "12px",
               backgroundColor: "#3498db",
               color: "white",
               border: "none",
-              borderRadius: "5px",
+              borderRadius: "8px",
               cursor: "pointer",
-              marginBottom: "10px",
+              marginBottom: "15px",
               width: "100%",
+              fontSize: "16px",
+              transition: "background-color 0.3s, transform 0.3s",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = "#2980b9";
+              e.target.style.transform = "scale(1.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = "#3498db";
+              e.target.style.transform = "scale(1)";
             }}
           >
             Show Profile
           </button>
 
-          {/* Buttons */}
-          <div style={{ marginTop: "15px" }}>
-            <button
-              onClick={handleLogout}
+          {/* Reading Button */}
+          <div style={{ marginBottom: "15px" }}>
+            <span
               style={{
-                padding: "10px",
-                backgroundColor: "#e74c3c",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                width: "100%",
-                marginBottom: "10px",
+                fontSize: "14px",
+                color: "#f0f0f0",
+                marginBottom: "8px",
+                display: "block",
               }}
             >
-              Logout
-            </button>
-
+              Please enter your initial reading:
+            </span>
             <button
               onClick={handleDisplay}
               style={{
-                padding: "10px",
+                padding: "12px",
                 backgroundColor: "#27ae60",
                 color: "white",
                 border: "none",
-                borderRadius: "5px",
+                borderRadius: "8px",
                 cursor: "pointer",
                 width: "100%",
+                fontSize: "16px",
+                transition: "background-color 0.3s, transform 0.3s",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = "#2ecc71";
+                e.target.style.transform = "scale(1.05)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = "#27ae60";
+                e.target.style.transform = "scale(1)";
               }}
             >
-              Display
+              Reading
             </button>
           </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: "12px",
+              backgroundColor: "#e74c3c",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer",
+              width: "100%",
+              fontSize: "16px",
+              transition: "background-color 0.3s, transform 0.3s",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = "#c0392b";
+              e.target.style.transform = "scale(1.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = "#e74c3c";
+              e.target.style.transform = "scale(1)";
+            }}
+          >
+            Logout
+          </button>
         </div>
       ) : (
-        <p style={{ color: "#2c3e50", fontSize: "18px" }}>Loading...</p>
+        <p style={{ color: "#ecf0f1", fontSize: "18px" }}>Loading...</p>  
       )}
     </div>
   );
