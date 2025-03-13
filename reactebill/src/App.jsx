@@ -5,6 +5,7 @@ import { auth } from "./components/firebase"; // Firebase setup
 import Login from "./components/login";
 import SignUp from "./components/register";
 import Profile from "./components/profile";
+import MyProfile from "./components/MyProfile"; // Import MyProfile component
 import LCD from "./components/lcd"; // Import LCD component
 
 import { ToastContainer } from "react-toastify";
@@ -34,14 +35,14 @@ function App() {
                 path="/"
                 element={user ? <Navigate to="/profile" /> : <Login />}
               />
-              {/* Other routes */}
+
+              {/* Authentication routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<SignUp />} />
-              <Route
-                path="/profile"
-                element={user ? <Profile /> : <Navigate to="/login" />}
-              />
-              {/* Add route for LCD page */}
+
+              {/* Protected routes (Require authentication) */}
+              <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+              <Route path="/my-profile" element={user ? <MyProfile /> : <Navigate to="/login" />} />
               <Route path="/lcd" element={user ? <LCD /> : <Navigate to="/login" />} />
             </Routes>
             <ToastContainer />

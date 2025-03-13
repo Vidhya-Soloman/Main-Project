@@ -3,8 +3,9 @@ import { auth, db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
-function Profile() {
+function MyProfile() {
   const [userDetails, setUserDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,25 +24,14 @@ function Profile() {
           console.error("Error fetching user data:", error);
         }
       } else {
-        console.log("User is not logged in");
+        console.log("User not authenticated");
+        navigate("/login"); // Redirect to login if not authenticated
       }
+      setLoading(false);
     };
 
     fetchUserData();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      navigate("/login");
-    } catch (error) {
-      console.error("Error logging out:", error.message);
-    }
-  };
-
-  const handleDisplay = () => {
-    navigate("/lcd");
-  };
+  }, [navigate]);
 
   return (
     <div
@@ -57,19 +47,21 @@ function Profile() {
       }}
     >
       <h1 style={{ fontSize: "32px", fontWeight: "bold", color: "#2c3e50", textAlign: "center", marginBottom: "20px" }}>
-        User Profile
+        My Profile
       </h1>
 
-      {userDetails ? (
+      {loading ? (
+        <p style={{ color: "#2c3e50", fontSize: "18px" }}>Loading...</p>
+      ) : userDetails ? (
         <div
           style={{
             width: "90%",
-            maxWidth: "400px",
+            maxWidth: "500px",
             backgroundColor: "#ffffff",
             borderRadius: "10px",
             padding: "20px",
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            textAlign: "center",
+            textAlign: "left",
           }}
         >
           {/* Profile Picture */}
@@ -77,56 +69,34 @@ function Profile() {
             <img
               src={userDetails.photo || "https://via.placeholder.com/150"}
               alt="Profile"
-              width={"100px"}
-              height={"100px"}
+              width={"120px"}
+              height={"120px"}
               style={{ borderRadius: "50%", objectFit: "cover" }}
             />
           </div>
 
-          <h3 style={{ color: "#2c3e50", marginBottom: "10px" }}>
-            Welcome, {userDetails.firstName}! 🙏
+          <h3 style={{ color: "#2c3e50", textAlign: "center" }}>
+            {userDetails.firstName} {userDetails.lastName}
           </h3>
 
-          {/* Profile Button (Navigates to MyProfile.jsx) */}
-          <button
-            onClick={() => navigate("/my-profile")}
-            style={{
-              padding: "10px",
-              backgroundColor: "#3498db",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              marginBottom: "10px",
-              width: "100%",
-            }}
-          >
-            Show Profile
-          </button>
+          {/* Full Details */}
+          <div style={{ padding: "10px", color: "#333" }}>
+            <p><strong>Email:</strong> {userDetails.email}</p>
+            <p><strong>Phone:</strong> {userDetails.phone}</p>
+            <p><strong>Consumer Number:</strong> {userDetails.consumerNumber}</p>
+            <p><strong>Post Number:</strong> {userDetails.postNumber}</p>
+            <p><strong>Address:</strong> {userDetails.address}</p>
+            <p><strong>Pincode:</strong> {userDetails.pincode}</p>
+            <p><strong>User Type:</strong> {userDetails.userType}</p>
+          </div>
 
-          {/* Buttons */}
-          <div style={{ marginTop: "15px" }}>
+          {/* Back Button */}
+          <div style={{ marginTop: "15px", textAlign: "center" }}>
             <button
-              onClick={handleLogout}
+              onClick={() => navigate(-1)}
               style={{
                 padding: "10px",
-                backgroundColor: "#e74c3c",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                width: "100%",
-                marginBottom: "10px",
-              }}
-            >
-              Logout
-            </button>
-
-            <button
-              onClick={handleDisplay}
-              style={{
-                padding: "10px",
-                backgroundColor: "#27ae60",
+                backgroundColor: "#3498db",
                 color: "white",
                 border: "none",
                 borderRadius: "5px",
@@ -134,15 +104,15 @@ function Profile() {
                 width: "100%",
               }}
             >
-              Display
+              Back
             </button>
           </div>
         </div>
       ) : (
-        <p style={{ color: "#2c3e50", fontSize: "18px" }}>Loading...</p>
+        <p style={{ color: "#2c3e50", fontSize: "18px" }}>No profile data available.</p>
       )}
     </div>
   );
 }
 
-export default Profile;
+export default MyProfile;

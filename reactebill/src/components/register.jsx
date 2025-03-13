@@ -9,10 +9,31 @@ function Register() {
   const [password, setPassword] = useState("");
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
-  const [loading, setLoading] = useState(false); // For loading state
+  const [phone, setPhone] = useState("");
+  const [consumerNumber, setConsumerNumber] = useState("");
+  const [postNumber, setPostNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [userType, setUserType] = useState(""); // Default to empty
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    // Validation checks
+    if (!/^\d{10}$/.test(phone)) {
+      toast.error("Phone number must be exactly 10 digits", { position: "bottom-center" });
+      return;
+    }
+    if (!/^\d{13}$/.test(consumerNumber)) {
+      toast.error("Consumer number must be exactly 13 digits", { position: "bottom-center" });
+      return;
+    }
+    if (userType === "") {
+      toast.error("Please select a user type", { position: "bottom-center" });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -24,6 +45,12 @@ function Register() {
           email: user.email,
           firstName: fname,
           lastName: lname,
+          phone: phone,
+          consumerNumber: consumerNumber,
+          postNumber: postNumber,
+          address: address,
+          pincode: pincode,
+          userType: userType,
           photo: "",
         });
 
@@ -41,26 +68,26 @@ function Register() {
     <div
       style={{
         width: "100vw",
-        height: "100vh",
+        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#2c3e50", // Dark background for contrast
-        margin: "0",
-        padding: "0",
+        backgroundColor: "#2c3e50",
+        padding: "20px",
       }}
     >
       {/* Ebill Heading */}
       <h1
         style={{
-          fontSize: "36px",
+          fontSize: "42px",
           fontWeight: "bold",
           fontFamily: "'Poppins', sans-serif",
           color: "#fff",
-          marginBottom: "25px",
+          marginBottom: "30px",
           letterSpacing: "1px",
           textTransform: "uppercase",
+          textAlign: "center",
         }}
       >
         Ebill
@@ -69,11 +96,11 @@ function Register() {
       <form
         onSubmit={handleRegister}
         style={{
-          maxWidth: "450px",
           width: "100%",
+          maxWidth: "450px",
           backgroundColor: "#34495e",
           borderRadius: "10px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
           padding: "30px",
           textAlign: "center",
         }}
@@ -88,6 +115,11 @@ function Register() {
           { label: "Last Name", value: lname, setter: setLname, type: "text" },
           { label: "Email Address", value: email, setter: setEmail, type: "email" },
           { label: "Password", value: password, setter: setPassword, type: "password" },
+          { label: "Phone Number (10 digits)", value: phone, setter: setPhone, type: "tel" },
+          { label: "Consumer Number (13 digits)", value: consumerNumber, setter: setConsumerNumber, type: "text" },
+          { label: "Post Number", value: postNumber, setter: setPostNumber, type: "text" },
+          { label: "Address", value: address, setter: setAddress, type: "text" },
+          { label: "Pincode", value: pincode, setter: setPincode, type: "text" },
         ].map((field, index) => (
           <div className="mb-3" key={index} style={{ marginBottom: "15px" }}>
             <label
@@ -114,14 +146,49 @@ function Register() {
                 borderRadius: "8px",
                 border: "1px solid #ddd",
                 fontSize: "14px",
-                color: "#fff", // White text while typing
-                backgroundColor: "#2c3e50", // Dark input background
+                color: "#fff",
+                backgroundColor: "#2c3e50",
                 outline: "none",
-                transition: "all 0.3s ease",
               }}
             />
           </div>
         ))}
+
+        {/* Dropdown for User Type */}
+        <div className="mb-3" style={{ marginBottom: "15px" }}>
+          <label
+            style={{
+              display: "block",
+              textAlign: "left",
+              fontWeight: "500",
+              color: "#fff",
+              marginBottom: "5px",
+            }}
+          >
+            User Type
+          </label>
+          <select
+            className="form-control"
+            value={userType}
+            onChange={(e) => setUserType(e.target.value)}
+            required
+            style={{
+              width: "100%",
+              padding: "12px",
+              borderRadius: "8px",
+              border: "1px solid #ddd",
+              fontSize: "14px",
+              color: "#fff",
+              backgroundColor: "#2c3e50",
+              outline: "none",
+              cursor: "pointer",
+            }}
+          >
+            <option value="">Select User Type</option>
+            <option value="Residential">Residential</option>
+            <option value="Commercial">Commercial</option>
+          </select>
+        </div>
 
         {/* Submit Button */}
         <div className="d-grid mb-3" style={{ marginBottom: "20px" }}>
@@ -137,7 +204,6 @@ function Register() {
               color: "#fff",
               border: "none",
               cursor: "pointer",
-              transition: "background-color 0.3s ease",
             }}
             disabled={loading}
           >
