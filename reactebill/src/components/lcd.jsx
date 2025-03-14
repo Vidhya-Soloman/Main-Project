@@ -4,13 +4,13 @@ import { doc, setDoc, getDoc, updateDoc, collection, getDocs } from "firebase/fi
 import { useNavigate } from "react-router-dom";
 
 function LCD() {
-  const [port, setPort] = useState(null);  // State for storing port object
+  const [port, setPort] = useState(null);  // Store port object
   const [initialReading, setInitialReading] = useState("");
-  const [currentReading, setCurrentReading] = useState(null); // Current incremented reading
-  const [isReadingEntered, setIsReadingEntered] = useState(false);  // Check if reading is entered
+  const [currentReading, setCurrentReading] = useState(null); // Incremented current reading
+  const [isReadingEntered, setIsReadingEntered] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
-  const [isFieldDisabled, setIsFieldDisabled] = useState(false);  // Disable field after reading
-  const [isErrorIgnored, setIsErrorIgnored] = useState(false);  // Track if error is ignored
+  const [isFieldDisabled, setIsFieldDisabled] = useState(false);
+  const [isErrorIgnored, setIsErrorIgnored] = useState(false);
   const navigate = useNavigate();
 
   // Get user data on load
@@ -22,7 +22,7 @@ function LCD() {
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           setUserDetails(userSnap.data());
-          
+
           // Check if the user has already entered the reading
           const readingsRef = collection(db, "Readings");
           const userReadingsQuery = await getDocs(readingsRef);
@@ -39,7 +39,9 @@ function LCD() {
             const readingRef = doc(db, "Readings", user.uid);
             const readingSnap = await getDoc(readingRef);
             if (readingSnap.exists()) {
-              setCurrentReading(readingSnap.data().currentReading);
+              const fetchedReading = readingSnap.data().currentReading;
+              setCurrentReading(fetchedReading);  // Set the current reading from Firestore
+              sendTextToArduino(fetchedReading);  // Send current reading to Arduino
             }
           }
         } else {
@@ -55,13 +57,16 @@ function LCD() {
 
   // Connect to Arduino via Web Serial API
   const connectToArduino = async () => {
+    if (port && port.readable) {
+      alert("Serial port is already connected!");
+      return;
+    }
+
     try {
       console.log("Attempting to connect to Arduino...");
       const serialPort = await navigator.serial.requestPort();
       await serialPort.open({ baudRate: 9600 });
-
-      // Only update the state if the connection is successful
-      setPort(serialPort);  // Update the port state with the serial port
+      setPort(serialPort);
       console.log("Connected to Arduino!");
       alert("Connected to Arduino!");
     } catch (error) {
@@ -71,28 +76,17 @@ function LCD() {
   };
 
   // Send data to Arduino
-  const sendTextToArduino = async (initial, current) => {
-    if (!port) {
-      //alert("Connect to Arduino first!");
-      return;
-    }
+  const sendTextToArduino = async (current) => {
+    if (!port) return;
 
     try {
       const writer = port.writable.getWriter();
-      // Send both initial and current readings to Arduino
-      const data = new TextEncoder().encode(`Initial: ${initial}\nReading: ${current}\n`);
-      await writer.write(data);
-      writer.releaseLock();  // Release lock after writing
-
-      // Log successful sending to Arduino
+      const data = new TextEncoder().encode(`Reading: ${current}\n`);
+      await writer.write(data);  // Send the reading data to Arduino
+      writer.releaseLock();
       console.log("Data successfully sent to Arduino!");
     } catch (error) {
-      if (isErrorIgnored) {
-        console.log("Error ignored: " + error.message);
-      } else {
-        console.error("Error sending data to Arduino: ", error);
-        //alert("Error sending data to Arduino.");
-      }
+      console.error("Error sending data to Arduino: ", error);
     }
   };
 
@@ -103,7 +97,6 @@ function LCD() {
       return;
     }
 
-    // Store the reading in Firestore
     const user = auth.currentUser;
     if (user && userDetails) {
       try {
@@ -118,13 +111,10 @@ function LCD() {
           timestamp: new Date(),
         });
 
-        setIsReadingEntered(true);  // Disable input after submitting
-        setCurrentReading(parseInt(initialReading)); // Set current reading
-
+        setIsReadingEntered(true);
+        setCurrentReading(parseInt(initialReading));
         alert("Initial reading submitted successfully!");
-
-        // Send the initial reading to Arduino
-        sendTextToArduino(initialReading, initialReading);
+        sendTextToArduino(initialReading);  // Send initial reading to Arduino
       } catch (error) {
         console.error("Error saving reading: ", error);
         alert("Error submitting reading. Please try again.");
@@ -134,43 +124,33 @@ function LCD() {
     }
   };
 
-  // Simulate usage: Increment the current reading periodically
+  // Update current reading periodically
   useEffect(() => {
     if (isReadingEntered) {
       const interval = setInterval(async () => {
         setCurrentReading((prevReading) => {
-          const newReading = prevReading + 1;  // Increment the reading by 1
-          
-          // Update the Firestore with the new current reading
+          const newReading = prevReading + 1;
           const user = auth.currentUser;
           if (user) {
             const readingsRef = doc(db, "Readings", user.uid);
-            updateDoc(readingsRef, {
-              currentReading: newReading,
-            });
-
-            sendTextToArduino(initialReading, newReading);  // Send both readings to Arduino
+            updateDoc(readingsRef, { currentReading: newReading });
+            sendTextToArduino(newReading);  // Send updated reading to Arduino
           }
           return newReading;
         });
-      }, 5000);  // Update every 5 seconds (you can adjust this)
-      
+      }, 5000);
+
       return () => clearInterval(interval);  // Cleanup interval on unmount
     }
-  }, [isReadingEntered, initialReading]);
+  }, [isReadingEntered]);
 
-  // Ignore error pop-up when clicked
-  const handleIgnoreError = () => {
-    setIsErrorIgnored(true);
-    console.log("Error alerts are now ignored.");
-  };
-
-  // Add useEffect to ensure port is set before trying to send data
+  // Send current reading to Arduino when currentReading changes
   useEffect(() => {
-    if (port) {
-      console.log("Arduino port connected:", port);
+    if (isReadingEntered && currentReading !== null) {
+      // Send the current reading to Arduino each time it's updated or on page revisit
+      sendTextToArduino(currentReading);
     }
-  }, [port]);
+  }, [currentReading, isReadingEntered]);  // Trigger when currentReading or isReadingEntered changes
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
@@ -190,7 +170,7 @@ function LCD() {
             placeholder="Initial Reading"
             value={initialReading}
             onChange={(e) => setInitialReading(e.target.value)}
-            disabled={isReadingEntered || isFieldDisabled}  // Disable input after reading is entered
+            disabled={isReadingEntered || isFieldDisabled}
           />
           <button onClick={handleSubmitReading}>Submit Reading</button>
         </div>
@@ -200,8 +180,6 @@ function LCD() {
           <p>Reading is updated every 5 seconds.</p>
         </div>
       )}
-
-      
     </div>
   );
 }
