@@ -8,6 +8,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -34,12 +35,11 @@ function Login() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#2c3e50", // Dark background like Register page
+        backgroundColor: "#2c3e50",
         margin: "0",
         padding: "0",
       }}
     >
-      {/* Ebill Heading */}
       <h1
         style={{
           fontSize: "36px",
@@ -73,7 +73,12 @@ function Login() {
         {/* Input fields */}
         {[
           { label: "Email Address", value: email, setter: setEmail, type: "email" },
-          { label: "Password", value: password, setter: setPassword, type: "password" },
+          {
+            label: "Password",
+            value: password,
+            setter: setPassword,
+            type: showPassword ? "text" : "password", // Toggle between text and password input type
+          },
         ].map((field, index) => (
           <div className="mb-3" key={index} style={{ marginBottom: "15px" }}>
             <label
@@ -108,6 +113,26 @@ function Login() {
             />
           </div>
         ))}
+
+        {/* Show Password Toggle */}
+        <div style={{ marginBottom: "15px", textAlign: "left", color: "#fff" }}>
+          <label
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              fontWeight: "500",
+              cursor: "pointer",
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={showPassword}
+              onChange={() => setShowPassword(!showPassword)} // Toggle showPassword state
+              style={{ marginRight: "8px" }}
+            />
+            Show Password
+          </label>
+        </div>
 
         {/* Submit Button */}
         <div className="d-grid mb-3" style={{ marginBottom: "20px" }}>

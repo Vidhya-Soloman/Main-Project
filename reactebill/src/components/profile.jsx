@@ -43,6 +43,10 @@ function Profile() {
     navigate("/lcd");
   };
 
+  const handleMyBill = () => {
+    navigate("/my-bill");
+  };
+
   return (
     <div
       style={{
@@ -52,7 +56,9 @@ function Profile() {
         justifyContent: "center",
         width: "100vw",
         minHeight: "100vh",
-        backgroundColor: "#34495e",  // Darker background outside the profile box
+        backgroundImage: "url('/thunder1.jpg')",  // Background image from public folder
+        backgroundSize: "cover", // Ensures the image covers the entire background
+        backgroundPosition: "center", // Centers the image
         padding: "20px",
         fontFamily: "'Roboto', sans-serif",
       }}
@@ -68,14 +74,14 @@ function Profile() {
           textTransform: "uppercase",
         }}
       >
-        User Profile
+        HomePage
       </h1>
 
       {userDetails ? (
         <div
           style={{
-            width: "90%",
-            maxWidth: "400px",
+            width: "90%",            // Adjusted width for the profile box
+            maxWidth: "500px",       // Increased maxWidth to make it wider
             backgroundColor: "#ffffff",
             borderRadius: "15px",
             padding: "25px",
@@ -84,6 +90,7 @@ function Profile() {
             transition: "all 0.3s ease",
             background: "linear-gradient(135deg, rgb(98, 52, 169), rgb(69, 123, 157))", // Darker gradient
             color: "#fff",
+            border: "3px solid #ecf0f1", // Added border color, thickness, and style
           }}
         >
           <h3
@@ -93,7 +100,7 @@ function Profile() {
               marginBottom: "15px",
             }}
           >
-            Welcome, {userDetails.firstName}! 🙏
+            Welcome, {userDetails.firstName}!
           </h3>
 
           {/* Profile Button */}
@@ -161,6 +168,33 @@ function Profile() {
             </button>
           </div>
 
+          {/* My Bill Button */}
+          <button
+            onClick={handleMyBill}
+            style={{
+              padding: "12px",
+              backgroundColor: "#f39c12",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer",
+              width: "100%",
+              fontSize: "16px",
+              transition: "background-color 0.3s, transform 0.3s",
+              marginBottom: "15px",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = "#e67e22";
+              e.target.style.transform = "scale(1.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = "#f39c12";
+              e.target.style.transform = "scale(1)";
+            }}
+          >
+            My Bill
+          </button>
+
           {/* Logout Button */}
           <button
             onClick={handleLogout}
@@ -188,7 +222,7 @@ function Profile() {
           </button>
         </div>
       ) : (
-        <p style={{ color: "#ecf0f1", fontSize: "18px" }}>Loading...</p>  
+        <p style={{ color: "#ecf0f1", fontSize: "18px" }}>Loading...</p>
       )}
     </div>
   );

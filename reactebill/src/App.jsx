@@ -7,6 +7,7 @@ import SignUp from "./components/register";
 import Profile from "./components/profile";
 import MyProfile from "./components/MyProfile"; // Import MyProfile component
 import LCD from "./components/lcd"; // Import LCD component
+import MyBill from "./components/MyBill"; // Import MyBill component (make sure to create this component)
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -44,6 +45,9 @@ function App() {
               <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
               <Route path="/my-profile" element={user ? <MyProfile /> : <Navigate to="/login" />} />
               <Route path="/lcd" element={user ? <LCD /> : <Navigate to="/login" />} />
+              
+              {/* New route for MyBill page */}
+              <Route path="/my-bill" element={user ? <MyBill /> : <Navigate to="/login" />} />
             </Routes>
             <ToastContainer />
           </div>
