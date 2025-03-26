@@ -49,11 +49,11 @@ function MyProfile() {
     >
       <h1
         style={{
-          fontSize: "40px",
+          fontSize: "36px",
           fontWeight: "700",
-          color: "#0277BD", // Darker blue color for the header
+          color: "#0277BD", // Dark blue header
           textAlign: "center",
-          marginBottom: "40px",
+          marginBottom: "30px",
           letterSpacing: "1px",
           textTransform: "uppercase",
         }}
@@ -67,23 +67,23 @@ function MyProfile() {
         <div
           style={{
             width: "90%",
-            maxWidth: "600px",
-            backgroundColor: "#a0fae7", // New light gray background for the card
+            maxWidth: "500px",
+            backgroundColor: "#bdfbf6", // Light blue background
             borderRadius: "12px",
-            padding: "30px",
+            padding: "25px",
             boxShadow: "0 6px 20px rgba(0, 0, 0, 0.1)",
             textAlign: "left",
-            border: "1px solid #B3E5FC", // Light blue border for the profile card
+            border: "1px solid #B3E5FC", // Light blue border
             transition: "all 0.3s ease",
           }}
         >
           {/* Profile Name */}
           <h3
             style={{
-              color: "#0288D1", // Bright blue color for the name
+              color: "#0288D1", // Bright blue for name
               textAlign: "center",
-              marginBottom: "30px",
-              fontSize: "24px",
+              marginBottom: "20px",
+              fontSize: "22px",
               fontWeight: "600",
             }}
           >
@@ -92,43 +92,45 @@ function MyProfile() {
 
           {/* Full Details */}
           <div style={{ padding: "10px", color: "#555", fontSize: "16px" }}>
-            <p style={{ marginBottom: "12px" }}>
+            <p>
               <strong>Email:</strong> {userDetails.email}
             </p>
-            <p style={{ marginBottom: "12px" }}>
+            <p>
               <strong>Phone:</strong> {userDetails.phone}
             </p>
-            <p style={{ marginBottom: "12px" }}>
+            <p>
               <strong>Consumer Number:</strong> {userDetails.consumerNumber}
             </p>
-            <p style={{ marginBottom: "12px" }}>
+            <p>
               <strong>Post Number:</strong> {userDetails.postNumber}
             </p>
-            <p style={{ marginBottom: "12px" }}>
+            <p>
               <strong>Address:</strong> {userDetails.address}
             </p>
-            <p style={{ marginBottom: "12px" }}>
+            <p>
               <strong>Pincode:</strong> {userDetails.pincode}
             </p>
-            <p style={{ marginBottom: "12px" }}>
+            <p>
               <strong>User Type:</strong> {userDetails.userType}
             </p>
           </div>
 
-          {/* Back Button */}
-          <div style={{ marginTop: "30px", textAlign: "center" }}>
+          {/* Back Button - Smaller Size */}
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
             <button
               onClick={() => navigate(-1)}
               style={{
-                padding: "14px 20px",
-                backgroundColor: "#00796B", // Teal color for the button
+                padding: "8px 14px", // Smaller size
+                backgroundColor: "#00796B", // Teal color
                 color: "white",
                 border: "none",
-                borderRadius: "8px",
+                borderRadius: "6px",
                 cursor: "pointer",
-                width: "100%",
-                fontSize: "16px",
+                fontSize: "14px",
+                fontWeight: "600",
                 transition: "background-color 0.3s, transform 0.3s",
+                width: "auto", // Adjusts to text size
+                minWidth: "100px", // Ensures button isn't too small
               }}
               onMouseEnter={(e) => {
                 e.target.style.backgroundColor = "#004D40"; // Darker teal on hover

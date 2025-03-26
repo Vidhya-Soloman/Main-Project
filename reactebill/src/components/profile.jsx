@@ -39,14 +39,6 @@ function Profile() {
     }
   };
 
-  const handleDisplay = () => {
-    navigate("/lcd");
-  };
-
-  const handleMyBill = () => {
-    navigate("/my-bill");
-  };
-
   return (
     <div
       style={{
@@ -56,22 +48,23 @@ function Profile() {
         justifyContent: "center",
         width: "100vw",
         minHeight: "100vh",
-        backgroundImage: "url('/thunder1.jpg')",  // Background image from public folder
-        backgroundSize: "cover", // Ensures the image covers the entire background
-        backgroundPosition: "center", // Centers the image
+        backgroundImage: "url('/2158.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
         padding: "20px",
-        fontFamily: "'Roboto', sans-serif",
+        fontFamily: "'Poppins', sans-serif",
       }}
     >
       <h1
         style={{
-          fontSize: "36px",
+          fontSize: "38px",
           fontWeight: "700",
-          color: "#ecf0f1",  // Lighter color for the header
+          color: "#fff",
           textAlign: "center",
           marginBottom: "20px",
           letterSpacing: "1px",
           textTransform: "uppercase",
+          textShadow: "2px 2px 10px rgba(0, 0, 0, 0.3)",
         }}
       >
         HomePage
@@ -80,152 +73,95 @@ function Profile() {
       {userDetails ? (
         <div
           style={{
-            width: "90%",            // Adjusted width for the profile box
-            maxWidth: "500px",       // Increased maxWidth to make it wider
-            backgroundColor: "#ffffff",
-            borderRadius: "15px",
-            padding: "25px",
-            boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
+            width: "90%",
+            maxWidth: "500px",
+            padding: "30px",
+            borderRadius: "20px",
+            background: "rgba(255, 255, 255, 0.1)",
+            backdropFilter: "blur(10px)",
+            border: "2px solid rgba(255, 255, 255, 0.2)",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
             textAlign: "center",
-            transition: "all 0.3s ease",
-            background: "linear-gradient(135deg, rgb(98, 52, 169), rgb(69, 123, 157))", // Darker gradient
+            transition: "transform 0.3s ease",
             color: "#fff",
-            border: "3px solid #ecf0f1", // Added border color, thickness, and style
           }}
         >
           <h3
             style={{
-              fontSize: "22px",
-              fontWeight: "600",
-              marginBottom: "15px",
+              fontSize: "24px",
+              fontWeight: "700",
+              marginBottom: "20px",
+              letterSpacing: "1px",
             }}
           >
             Welcome, {userDetails.firstName}!
           </h3>
 
-          {/* Profile Button */}
-          <button
-            onClick={() => navigate("/my-profile")}
-            style={{
-              padding: "12px",
-              backgroundColor: "#3498db",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              marginBottom: "15px",
-              width: "100%",
-              fontSize: "16px",
-              transition: "background-color 0.3s, transform 0.3s",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "#2980b9";
-              e.target.style.transform = "scale(1.05)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "#3498db";
-              e.target.style.transform = "scale(1)";
-            }}
-          >
-            Show Profile
-          </button>
+          {/* Buttons Section */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+            <Button onClick={() => navigate("/my-profile")} color1="#4B0082" color2="#8A2BE2">
+              Show Profile
+            </Button>
 
-          {/* Reading Button */}
-          <div style={{ marginBottom: "15px" }}>
-            <span
-              style={{
-                fontSize: "14px",
-                color: "#f0f0f0",
-                marginBottom: "8px",
-                display: "block",
-              }}
-            >
-              Please enter your initial reading:
-            </span>
-            <button
-              onClick={handleDisplay}
-              style={{
-                padding: "12px",
-                backgroundColor: "#27ae60",
-                color: "white",
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-                width: "100%",
-                fontSize: "16px",
-                transition: "background-color 0.3s, transform 0.3s",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = "#2ecc71";
-                e.target.style.transform = "scale(1.05)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = "#27ae60";
-                e.target.style.transform = "scale(1)";
-              }}
-            >
-              Reading
-            </button>
+            {/* Added Text Above "Enter Reading" Button */}
+            <p style={{ color: "#fff", fontSize: "16px", fontWeight: "500", marginBottom: "5px" }}>
+              Enter your initial reading
+            </p>
+            <Button onClick={() => navigate("/lcd")} color1="#008000" color2="#00FF7F">
+              Enter Reading
+            </Button>
+
+            <Button onClick={() => navigate("/my-bill")} color1="#FF4500" color2="#FF6347">
+              My Bill
+            </Button>
+
+            <Button onClick={handleLogout} color1="#DC143C" color2="#FF0000">
+              Logout
+            </Button>
           </div>
-
-          {/* My Bill Button */}
-          <button
-            onClick={handleMyBill}
-            style={{
-              padding: "12px",
-              backgroundColor: "#f39c12",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              width: "100%",
-              fontSize: "16px",
-              transition: "background-color 0.3s, transform 0.3s",
-              marginBottom: "15px",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "#e67e22";
-              e.target.style.transform = "scale(1.05)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "#f39c12";
-              e.target.style.transform = "scale(1)";
-            }}
-          >
-            My Bill
-          </button>
-
-          {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: "12px",
-              backgroundColor: "#e74c3c",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              width: "100%",
-              fontSize: "16px",
-              transition: "background-color 0.3s, transform 0.3s",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "#c0392b";
-              e.target.style.transform = "scale(1.05)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "#e74c3c";
-              e.target.style.transform = "scale(1)";
-            }}
-          >
-            Logout
-          </button>
         </div>
       ) : (
-        <p style={{ color: "#ecf0f1", fontSize: "18px" }}>Loading...</p>
+        <p style={{ color: "#fff", fontSize: "18px" }}>Loading...</p>
       )}
     </div>
   );
 }
+
+// Custom Button Component with Hover Effect
+const Button = ({ onClick, color1, color2, children }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        padding: "12px",
+        background: `linear-gradient(135deg, ${color1}, ${color2})`,
+        color: "white",
+        border: "none",
+        borderRadius: "8px",
+        cursor: "pointer",
+        width: "100%",
+        fontSize: "16px",
+        fontWeight: "600",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+        textTransform: "uppercase",
+        letterSpacing: "0.5px",
+        outline: "none",
+        display: "inline-block",
+        textAlign: "center",
+        textDecoration: "none",
+        margin: "0 auto",
+        transform: isHovered ? "scale(1.08)" : "scale(1)",
+        boxShadow: isHovered ? "0 6px 15px rgba(0, 0, 0, 0.3)" : "0 4px 10px rgba(0, 0, 0, 0.2)",
+      }}
+    >
+      {children}
+    </button>
+  );
+};
 
 export default Profile;

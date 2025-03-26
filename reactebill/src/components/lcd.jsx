@@ -67,9 +67,9 @@ function LCD() {
       await serialPort.open({ baudRate: 9600 });
       setPort(serialPort);
       console.log("Connected to Arduino!");
-      alert("Connected to Arduino!");
+      alert("Connected!");
     } catch (error) {
-      alert("Error connecting to Arduino: " + error.message);
+      alert("Error connecting: " + error.message);
       console.error(error);
     }
   };
@@ -83,9 +83,9 @@ function LCD() {
       const data = new TextEncoder().encode(`Reading: ${current}\n`);
       await writer.write(data); // Send the reading data to Arduino
       writer.releaseLock();
-      console.log("Data successfully sent to Arduino!");
+      console.log("Data successfully sent!");
     } catch (error) {
-      console.error("Error sending data to Arduino: ", error);
+      console.error("Error sending data: ", error);
     }
   };
 

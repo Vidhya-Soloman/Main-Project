@@ -8,9 +8,10 @@ function MyBill() {
   const [billAmount, setBillAmount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [canPayNow, setCanPayNow] = useState(false);
-  const [timeDifferenceInMinutes, setTimeDifferenceInMinutes] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [showPaymentInput, setShowPaymentInput] = useState(false);
+  const [billReadyTimestamp, setBillReadyTimestamp] = useState(null);
+  const [fineApplied, setFineApplied] = useState(false);
+  const [initialBillAmount, setInitialBillAmount] = useState(0);
 
   useEffect(() => {
     const fetchUserAndReadings = async () => {
@@ -51,10 +52,10 @@ function MyBill() {
 
           if (initialTimestamp && currentTimestamp) {
             const timeDifference = currentTimestamp - initialTimestamp;
-            setTimeDifferenceInMinutes(timeDifference / 60000);
 
             if (timeDifference >= 5 * 60 * 1000) {
               setCanPayNow(true);
+              setBillReadyTimestamp(currentTimestamp);
             }
           }
         }
@@ -75,6 +76,7 @@ function MyBill() {
 
       if (initialReading === currentReading) {
         setBillAmount(50);
+        setInitialBillAmount(50);
         return;
       }
 
@@ -93,12 +95,26 @@ function MyBill() {
         else bill = 50 * 2 + 100 * 3.5 + 150 * 5 + (unitsConsumed - 300) * 6;
       }
 
-      bill += 50;
-      bill += bill * 0.05;
+      bill += 50;               // Fixed service charge
+      bill += bill * 0.05;      // 5% tax
 
       setBillAmount(bill);
+      setInitialBillAmount(bill);
     }
   }, [userDetails, readings]);
+
+  useEffect(() => {
+    if (billReadyTimestamp) {
+      const currentTimestamp = new Date();
+      const timeElapsed = (currentTimestamp - billReadyTimestamp) / 60000;
+
+      if (timeElapsed > 2 && !fineApplied) {
+        const fine = 0.1 * initialBillAmount;
+        setBillAmount((prevBill) => prevBill + fine);
+        setFineApplied(true);
+      }
+    }
+  }, [billReadyTimestamp, fineApplied, initialBillAmount]);
 
   const handlePayment = () => {
     if (!phoneNumber) {
@@ -106,10 +122,15 @@ function MyBill() {
       return;
     }
 
-    const transactionId = "TXN" + Math.floor(Math.random() * 1000000);
-    const upiLink = `upi://pay?pa=vdsoloman552@okicici&pn=Electricity%20Board&tid=${transactionId}&tr=${transactionId}&tn=Electricity%20Bill&am=${billAmount}&cu=INR`;
+    const fine = fineApplied ? 0.1 * initialBillAmount : 0;
+    const totalBill = billAmount + fine;
 
-    window.location.href = upiLink; // Redirect to UPI payment app
+    const transactionId = "TXN" + Math.floor(Math.random() * 1000000);
+    const upiLink = `upi://pay?pa=vdsoloman552@okicici&pn=Electricity%20Board&tid=${transactionId}&tr=${transactionId}&tn=Electricity%20Bill&am=${totalBill.toFixed(2)}&cu=INR`;
+
+    alert("You will be redirected to Google Pay (or your UPI app) to complete the payment.");
+
+    window.location.href = upiLink;
   };
 
   return (
@@ -147,15 +168,26 @@ function MyBill() {
               Hello, {userDetails.firstName} {userDetails.lastName}
             </h2>
 
-            <p style={{ fontSize: "18px", marginBottom: "10px", color: "#2c3e50" }}>
-              <strong>Initial Reading:</strong> {readings.initialReading}
+            {/* Display initial and current readings */}
+            <p style={{ fontSize: "18px", color: "#2c3e50" }}>
+              <strong>Initial Reading:</strong> {readings.initialReading} kWh
             </p>
-            <p style={{ fontSize: "18px", marginBottom: "10px", color: "#2c3e50" }}>
-              <strong>Current Reading:</strong> {readings.currentReading}
+            <p style={{ fontSize: "18px", color: "#2c3e50" }}>
+              <strong>Current Reading:</strong> {readings.currentReading} kWh
             </p>
 
-            <p style={{ fontSize: "18px", marginTop: "20px", color: "#2c3e50" }}>
-              <strong>Total Bill: ₹{billAmount.toFixed(2)}</strong>
+            <p style={{ fontSize: "18px", color: "#2c3e50" }}>
+              <strong>Initial Bill Amount:</strong> ₹{initialBillAmount.toFixed(2)}
+            </p>
+
+            {fineApplied && (
+              <p style={{ fontSize: "18px", color: "red" }}>
+                <strong>Fine:</strong> ₹{(0.1 * initialBillAmount).toFixed(2)}
+              </p>
+            )}
+
+            <p style={{ fontSize: "18px", color: "#2c3e50" }}>
+              <strong>Total Bill:</strong> ₹{(billAmount + (fineApplied ? 0.1 * initialBillAmount : 0)).toFixed(2)}
             </p>
 
             {canPayNow && (
@@ -167,7 +199,9 @@ function MyBill() {
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   style={{ padding: "10px", width: "80%", marginBottom: "10px" }}
                 />
-                <button onClick={handlePayment}>Proceed to Pay</button>
+                <button onClick={handlePayment} style={{ padding: "10px 20px", backgroundColor: "#3498db", color: "white", border: "none", borderRadius: "5px" }}>
+                  Proceed to Pay
+                </button>
               </>
             )}
           </>
