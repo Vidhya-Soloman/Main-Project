@@ -1,8 +1,6 @@
-// MyBill.jsx
-
 import React, { useEffect, useState } from "react";
 import { auth, db } from "./firebase";
-import { doc, getDoc, Timestamp } from "firebase/firestore";
+import { doc, getDoc, Timestamp, addDoc, collection, updateDoc } from "firebase/firestore";
 import { getMessaging, getToken } from "firebase/messaging";
 
 function MyBill() {
@@ -16,6 +14,8 @@ function MyBill() {
   const [fineApplied, setFineApplied] = useState(false);
   const [initialBillAmount, setInitialBillAmount] = useState(0);
   const [fcmToken, setFcmToken] = useState(null);
+  const [isSendingNotification, setIsSendingNotification] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);  // New state to track payment success
 
   useEffect(() => {
     const fetchUserAndReadings = async () => {
@@ -62,6 +62,9 @@ function MyBill() {
               setBillReadyTimestamp(currentTimestamp);
             }
           }
+        } else {
+          setBillAmount(50);
+          setInitialBillAmount(50);
         }
       } catch (error) {
         console.error("Error fetching user or readings data:", error);
@@ -122,20 +125,20 @@ function MyBill() {
 
   useEffect(() => {
     const messaging = getMessaging();
-    getToken(messaging, { vapidKey: "YOUR_VAPID_KEY" }).then((currentToken) => {
+    getToken(messaging, { vapidKey: "BFWk7jrHlT8bZoXY0gXDRbRNMC0_IZrN01VJW2lu4Ry-S0HiFfd5G-8PMBOzaAX0vAl5xmbtuhzMnSeu9Nr_r7Q" }).then((currentToken) => {
       if (currentToken) {
         setFcmToken(currentToken);
       } else {
-        console.log("No token available. Request permission to generate one.");
+        console.log("No registration token available.");
       }
     }).catch((err) => {
-      console.log("An error occurred while retrieving token. ", err);
+      console.log("An error occurred while retrieving FCM token.", err);
     });
   }, []);
 
   const sendNotification = () => {
     if (fcmToken) {
-      // Send the FCM token to your backend for push notification
+      setIsSendingNotification(true);
       fetch('http://localhost:5000/send-notification', {
         method: 'POST',
         headers: {
@@ -147,17 +150,19 @@ function MyBill() {
           body: "A payment has been initiated for your electricity bill.",
         }),
       })
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
+          setIsSendingNotification(false);
           console.log("Notification sent successfully:", data);
         })
         .catch((error) => {
+          setIsSendingNotification(false);
           console.error("Error sending notification:", error);
         });
     }
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (!phoneNumber) {
       alert("Please enter a valid phone number linked to UPI.");
       return;
@@ -167,14 +172,56 @@ function MyBill() {
     const totalBill = billAmount + fine;
 
     const transactionId = "TXN" + Math.floor(Math.random() * 1000000);
-    const upiLink = `upi://pay?pa=vdsoloman552@okicici&pn=Electricity%20Board&tid=${transactionId}&tr=${transactionId}&tn=Electricity%20Bill&am=${totalBill.toFixed(2)}&cu=INR`;
 
-    alert("You will be redirected to Google Pay (or your UPI app) to complete the payment.");
-
-    // Send notification
+    // Send notification immediately
     sendNotification();
 
-    window.location.href = upiLink;
+    // Display payment instructions instead of auto-redirect
+    alert(`To pay, please open your UPI app and enter the following details:
+    \n\nUPI ID: vdsoloman552@okicici
+    \nAmount: ₹${totalBill.toFixed(2)}
+    \nTransaction ID: ${transactionId}
+    \n\nPlease follow the steps in your UPI app to complete the payment.`);
+
+    // Update the readings status to paid
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const billRef = collection(db, "Bill");
+      const billDoc = await addDoc(billRef, {
+        userId: user.uid,
+        billAmount: totalBill,
+        transactionId: transactionId,
+        phoneNumber: phoneNumber,
+        timestamp: new Date(),
+        readings: {
+          initialReading: readings.currentReading,
+          currentReading: readings.currentReading,
+        },
+        fineApplied: fineApplied,
+        fineAmount: fine,
+        usage: readings.currentReading - readings.initialReading,  // Store the usage
+        billStatus: false, // Initially, the bill is not paid
+        consumerNumber: userDetails.consumerNumber,  // Add consumerNumber
+        firstName: userDetails.firstName, // Add firstName
+      });
+
+      // Update the status in the "Readings" collection as well
+      const readingsRef = doc(db, "Readings", user.uid);
+      await updateDoc(readingsRef, {
+        status: true,  // Mark the status as true (indicating payment)
+        initialReading: readings.currentReading,  // Set new initial reading for next cycle
+        initialTimestamp: new Date(),  // Set the new initial timestamp
+        timestamp: new Date()  // Update the timestamp
+      });
+
+      // Set payment success state to true
+      setPaymentSuccess(true);
+      alert("Payment successful! Your new readings will be shown next cycle.");
+    } catch (error) {
+      console.error("Error storing bill data:", error);
+    }
   };
 
   return (
@@ -204,7 +251,7 @@ function MyBill() {
           textAlign: "center",
         }}
       >
-        {loading ? (
+        {loading || paymentSuccess ? (
           <p style={{ fontSize: "18px" }}>Loading...</p>
         ) : userDetails && readings ? (
           <>
@@ -250,7 +297,7 @@ function MyBill() {
             )}
           </>
         ) : (
-          <p>No readings data available.</p>
+          <p>No readings data available. Minimum charge: ₹50</p>
         )}
       </div>
     </div>
