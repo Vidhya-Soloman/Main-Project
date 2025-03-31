@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "./firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
+  const [consumption, setConsumption] = useState(null); // State to store consumption data
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -12,12 +13,26 @@ function Profile() {
       const user = auth.currentUser;
       if (user) {
         try {
+          // Fetch user details from the "Users" collection
           const docRef = doc(db, "Users", user.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             setUserDetails(docSnap.data());
           } else {
             console.log("No user data found");
+          }
+
+          // Fetch user's consumption from the "Bill" collection using their consumer number
+          const billsRef = collection(db, "Bill");
+          const q = query(billsRef, where("consumerNumber", "==", userDetails?.consumerNumber));
+          const billSnapshot = await getDocs(q);
+
+          if (!billSnapshot.empty) {
+            billSnapshot.forEach((doc) => {
+              setConsumption(doc.data().usage); // Assuming 'usage' is the field in the Bill collection
+            });
+          } else {
+            console.log("No consumption data found");
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -27,8 +42,10 @@ function Profile() {
       }
     };
 
-    fetchUserData();
-  }, []);
+    if (auth.currentUser) {
+      fetchUserData();
+    }
+  }, [userDetails?.consumerNumber]); // Add a dependency to re-run the effect when userDetails changes
 
   const handleLogout = async () => {
     try {
@@ -115,6 +132,11 @@ function Profile() {
               My Bill
             </Button>
 
+            {/* New Button to Show Current Consumption */}
+            <Button onClick={() => navigate("/current-consumption")} color1="#00BFFF" color2="#1E90FF">
+              Current Consumption
+            </Button>
+
             <Button onClick={handleLogout} color1="#DC143C" color2="#FF0000">
               Logout
             </Button>
@@ -162,6 +184,6 @@ const Button = ({ onClick, color1, color2, children }) => {
       {children}
     </button>
   );
-};
+}
 
 export default Profile;
